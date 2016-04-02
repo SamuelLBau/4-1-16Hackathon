@@ -32,6 +32,8 @@ class mainFrame(tk.Frame):
         self.openStatusTB.config(disabledforeground="black")
         self.lockedStatusTB.config(disabledforeground="black")
         
+        self.lockedStatusTB.bind("<Button-1>",self.tryLockBox)
+        
         self.touchpadFrame = TPF(self,self.setCompleteTouchCode)
         
         
@@ -43,7 +45,11 @@ class mainFrame(tk.Frame):
         
         
         
-        
+    def tryLockBox(self,event):
+        if(self.openStatus.get() == "Closed"):
+            self.lockedStatus.set("Locked")
+            print("TODO, actually interface with device and lock box")
+        print("TODO: Check all states, only lock when box is closed")
     def openStatusChange(self):
         if(self.openStatus.get() == "Open"):
             self.openStatusTB.config(disabledbackground="green")
