@@ -5,10 +5,11 @@ from touchpadFrame import touchpadFrame as TPF
 
 class mainFrame(tk.Frame):
     
-    def __init__(self,master,SCTC,SCEC):
+    def __init__(self,master,SCTC,SCEC,SLB):
         tk.Frame.__init__(self,master,bg='#F0F0F0')
         self.setCompleteTouchCode = SCTC
         self.setCompleteEncoderCode = SCEC
+        self.setLockBox = SLB;
         
         
         self.placeFrames()
@@ -46,10 +47,8 @@ class mainFrame(tk.Frame):
         
         
     def tryLockBox(self,event):
-        if(self.openStatus.get() == "Closed"):
-            self.lockedStatus.set("Locked")
-            print("TODO, actually interface with device and lock box")
-        print("TODO: Check all states, only lock when box is closed")
+        self.setLockBox("True")
+
     def openStatusChange(self):
         if(self.openStatus.get() == "Open"):
             self.openStatusTB.config(disabledbackground="green")

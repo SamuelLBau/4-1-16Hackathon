@@ -12,6 +12,10 @@ class Application(tk.Toplevel):
     updateAdminPWID =   "updateAPW"
     updatePINID =       "updatePIN"
     updateLockdown =    "updateLockdown"
+    updateLock =        "updateLock"
+    state_open =        "state_open"
+    state_locked =      "state_locked"
+    state_lockdown=     "state_lockdown"
     def __init__(self,parent=None):
         tk.Toplevel.__init__(self,parent,bg='#F0F0F0',bd=1,relief='sunken')
         
@@ -23,7 +27,7 @@ class Application(tk.Toplevel):
         
         
     def placeWidgets(self):
-        self.mainFrame = mainFrame(self,self.sendCompleteTouchCode,self.sendCompleteEncoderCode)
+        self.mainFrame = mainFrame(self,self.sendCompleteTouchCode,self.sendCompleteEncoderCode,self.sendUpdateLock)
         
         
         self.mainFrame.grid()
@@ -41,52 +45,77 @@ class Application(tk.Toplevel):
         
     def openAdminFrame(self):
         dialog = getAdminPW(self.checkAdminPW)
+
+    def openAdminOptionsDialog(self):
+        dialog = adminOptionsDialog(UAPW=self.sendUpdateAdminPassword,UPIN=self.sendUpdatePIN,
+            ULD=self.sendUpdateLockdown)
         
+        print("TODO: send code to microcontroller, ask for if code accepted") 
+
+#-------------BEGIN COMMANDS-------------------
+    def sendCompleteTouchCode(self,code):
+        #Code is a string
+        response = self.WiFiCOM.sendCommand(self.tryTouchpadCode,code)
+        print("tryTouchpadCode response %s"%(response))
+        return response
+        
+    def sendCompleteEncoderCode(self,code):
+        print("Do something with encoders")
+    
     def checkAdminPW(self,PW):
         #Check controller for validity
-        #If error, open error dialog
-        #If correct, open admin options dialog
-        print("Password input was %s"%(PW))
         response = self.WiFiCOM.sendCommand(self.checkAdminPWID,PW)
+        print("checkAdminPW response %s"%(response))
         #if(response == "True"):
         #    self.openAdminOptionsDialog()
         self.openAdminOptionsDialog()   
         print("TODO: check controller for adminPW")
-    def openAdminOptionsDialog(self):
-        dialog = adminOptionsDialog(UAPW=self.sendUpdateAdminPassword,UPIN=self.sendUpdatePIN,
-            ULD=self.sendUpdateLockdown)
     def sendUpdateAdminPassword(self,PW):
         response = self.WiFiCOM.sendCommand(self.updateAdminPWID,PW)
+        print("sendUpdateAdminPassword response %s"%(response))
+        return response
         
-        print("TODO: send code to microcontroller, ask for if code accepted") 
     def sendUpdatePIN(self,PIN):
         #This is the touchpad code
         response = self.WiFiCOM.sendCommand(self.updatePINID,PIN)
-        print("TODO: send code to microcontroller, ask for if code accepted") 
-    
+        print("sendUpdatePIN response %s"%(response))
+        return response 
+        
     def sendUpdateLockdown(self,state):
         response = self.WiFiCOM.sendCommand(self.updateLockdown,state)
-        print("TODO: send code to microcontroller, ask for if code accepted") 
+        print("sendUpdateLockdown response %s"%(response))
+        return response
+
+    def sendUpdateLock(self,state):
+        response = self.WiFiCOM.sendCommand(self.updateLock,state)
+        print("sendUpdateLock response %s"%(response))
+        return response
+
         
-    def sendCompleteTouchCode(self,code):
-        #Code is a string
-        response = self.WiFiCOM.sendCommand(self.tryTouchpadCode,code)
-        
-        print("TODO: send code to microcontroller, ask for if code accepted")
-        
-        return -1
-    def sendCompleteEncoderCode(self,code):    
-        #Code is a string
-        
-        print("TODO: send code to microcontroller, ask for if code accepted")
-        return -1
-    def resetBothCodes(self):
-        print("TODO: undo any accepted codes")
-        
-        
-        
+    
+#-------------END COMMANDS-------------------       
+#-----------BEGIN REQUESTS-------------------
+    def requestStateOpen():
+        response = self.WiFiCOM.requestData(self.state_open)
         #placeholder, return code provided by microcontroller
-        return 1
+        return response
+        
+    def requestStateLocked():
+        response = self.WiFiCOM.requestData(self.state_locked)
+        #placeholder, return code provided by microcontroller
+        return response
+        
+    def requestStateOLockdown():
+        response = self.WiFiCOM.requestData(self.state_lockdown)
+        #placeholder, return code provided by microcontroller
+        return response
+        
+    def requestAll():
+        response = self.WiFiCOM.requestAll()
+        #placeholder, return code provided by microcontroller
+        return response
+        
+#--------------END REQUESTS--------------------
         
     
         
