@@ -8,6 +8,10 @@ HOST = "192.168.46.101"
 
 tn = telnetlib.Telnet(HOST)
 
-tn.write("Hello telnet")
+#tn.write("Hello telnet\n")
+val = tn.read_all()
+print "Printing val: %s" %(val)
 
-print tn.read_until("Quit")
+val2 = tn.read_until("Quit")
+print("Printing read until %s" %(val2))
+
