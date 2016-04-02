@@ -15,21 +15,39 @@ void LCDisplay::begin()
     lcd.begin (16,2); //  <<----- My LCD was 16x2
 
     // Switch on the backlight
+    //lcd.backlight();
     lcd.setBacklightPin(BACKLIGHT_PIN,POSITIVE);
     lcd.setBacklight(HIGH);
-    //lcd.home (); // go home
+    lcd.home (); // go home
+    lcd.setCursor (0,0);
+    /*
+	while(true)
+    {
+       lcd.setCursor (0,0); 
+       lcd.print("TestA");
+       lcd.setCursor (0,1); 
+       lcd.print("TestB");
+       Serial.println("Printed TESTS to LCD");
+       delay(500);
+    }
+    */
+    lcd.home (); // go home
 }
 
 int LCDisplay::writerow1(String val)
 {
-	lcd.setCursor (0,0); 
+	lcd.setCursor (0,0);
+    lcd.print("                ");
+    lcd.setCursor (0,0);
 	lcd.print(val);
 	row1String = val;
 }
 
 int LCDisplay::writerow2(String val)
 {
-	lcd.setCursor (0,1);  	
+	lcd.setCursor (0,1);
+    lcd.print("                ");
+    lcd.setCursor (0,1);  	
 	lcd.print(val);
 	row2String = val;
 }

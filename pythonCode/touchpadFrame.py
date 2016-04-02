@@ -95,7 +95,9 @@ class touchpadFrame(tk.Frame):
 
         
     def enterCode(self):
-        self.SCF(self.getCurrentCode())
+        code = self.getCurrentCode()
+        self.clearCurrentCode();
+        self.SCF(code)
         print("TODO: send code to microcontroller, return state of lock")
         
         

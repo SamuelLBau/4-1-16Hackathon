@@ -29,9 +29,30 @@ LCDisplay LCD;
 int i = 0;
 String adminPW = "hackathon";
 String defaultPIN = "1111";
-String state_locked = "True";
-String state_open = "False";
+String state_locked = "False";
+String state_open = "True";
 String state_lockdown = "False";
+
+String latchOpen = "True";
+
+#define OPEN_LATCH_OUTPUT       PORT->Group[1].DIRSET.reg = PORT_PB06
+#define CLOSE_LATCH_OUTPUT       PORT->Group[1].DIRSET.reg = PORT_PB05
+
+
+#define OPEN_LATCH_ON_MACRO     PORT->Group[1].OUTSET.reg = PORT_PB06
+#define OPEN_LATCH_OFF_MACRO    PORT->Group[1].OUTCLR.reg = PORT_PB06
+#define CLOSE_LATCH_ON_MACRO    PORT->Group[1].OUTSET.reg = PORT_PB05
+#define CLOSE_LATCH_OFF_MACRO   PORT->Group[1].OUTCLR.reg = PORT_PB05
+#define LED1_ON_MACRO           PORT->Group[3].OUTSET.reg = PORT_PB30 //Used by touchpad
+#define LED1_OFF_MACRO          PORT->Group[3].OUTCLR.reg = PORT_PB30
+#define LED2_ON_MACRO           PORT->Group[3].OUTSET.reg = PORT_PA15
+#define LED2_OFF_MACRO          PORT->Group[3].OUTCLR.reg = PORT_PA15
+#define LED3_ON_MACRO
+#define LED3_OFF_MACRO
+#define LED4_ON_MACRO
+#define LED4_OFF_MACRO
+
+
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(115200);
@@ -42,7 +63,19 @@ void setup() {
   TP.begin();
   TP.setPW(defaultPIN);
 
+  //setGPIOPins();
+  //OPEN_LATCH_OUTPUT;
+  //CLOSE_LATCH_OUTPUT;
   LCD.begin();
+  /*
+  while(true)
+  {
+    closeLatch();
+    openLatch();
+    //delay(1000);
+    Serial.println("In Latch loop");
+  }
+  */
 }
 
 
@@ -50,11 +83,11 @@ void loop()
 {
   Serial.println("In main loop");
   Serial.print("I = ");Serial.println(i++);
-  Serial.print("state_locked");Serial.println(state_locked);
-  Serial.print("state_open");Serial.println(state_open);
-  Serial.print("state_lockdown");Serial.println(state_lockdown);
-  Serial.print("adminPW");Serial.println(adminPW);
-  Serial.print("PIN");Serial.println(TP.getPW());
+  Serial.print("state_locked: ");Serial.println(state_locked);
+  Serial.print("state_open: ");Serial.println(state_open);
+  Serial.print("state_lockdown: ");Serial.println(state_lockdown);
+  Serial.print("adminPW: ");Serial.println(adminPW);
+  Serial.print("PIN: ");Serial.println(TP.getPW());
 
   //These lines update the state of the lockbox
   handleWifiRequests();
@@ -62,11 +95,14 @@ void loop()
   //state_open = FS.isOpen();
   lockedLogic(); //This edits state_locked
 
+  //affectLatch();
+
+  
   
 
   //These display data on devices
   displayOnLCD(); //Will probably just write safe is LOCKED / IN LOCKDOWN
-  displayOnLED(); //Hopefully will be able to add some state LEDS
+  //displayOnLED(); //Hopefully will be able to add some state LEDS
   delay(100);
 }
 String lockedLogic()
@@ -81,17 +117,29 @@ String lockedLogic()
     {
       state_locked = "False";
     }
+    else
+    {
+      state_locked = "True";
+    }
   }
 }
 void displayOnLCD()
 {
-  if(state_locked == "True")
+  String TPText = TP.getString();
+  if(TPText == "")
   {
-    LCD.writerow1("Box is locked");
+    if(state_locked == "True")
+    {
+      LCD.writerow1("Box is locked");
+    }
+    else
+    {
+      LCD.writerow1("Box is unlocked");
+    }
   }
   else
   {
-    LCD.writerow1("Box is unocked");
+    LCD.writerow1(TPText);
   }
   if(state_lockdown == "True")
   {
@@ -106,6 +154,33 @@ void displayOnLED()
 {
   
 }
+void affectLatch()
+{
+  if(state_locked == "True" && state_open == "False")
+  {
+    if(latchOpen == "True")
+    {
+      closeLatch();
+    }
+  }
+  if(state_locked == "False" && latchOpen == "False")
+  {
+    openLatch();
+  }
+}
+void openLatch()
+{
+  //#OPEN_LATCH_ON_MACRO;
+  delay(500);
+  //#OPEN_LATCH_OFF_MACRO;
+}
+void closeLatch()
+{
+  //#CLOSE_LATCH_ON_MACRO;
+  delay(500);
+  //CLOSE_LATCH_OFF_MACRO;
+}
+
 void handleWifiRequests()
 {
   Serial.println("Checking for Wifi Request");
@@ -158,6 +233,10 @@ void handleWiFiCommand(String commandString)
   }
   if(command == CHECK_ADMIN_PW)
   {
+    Serial.print("Value");
+    Serial.println(value);
+    Serial.print("adminPF");
+    Serial.println(adminPW);
     if(value ==adminPW)
     {
       WIFI.sendData("True");
@@ -184,8 +263,11 @@ void handleWiFiCommand(String commandString)
   }
   if(command == LOCK_SAFE)
   {
-    //TODO Add all other lock checks
-    TP.setPWAcceptedFalse();
+    if(value == "True")
+    {
+      TP.setPWAcceptedFalse();
+      state_locked = "True";
+    }
   }
   
 }

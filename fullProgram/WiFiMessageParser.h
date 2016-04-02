@@ -15,7 +15,7 @@
 #define UPDATE_ADMIN_PW     "updateAPW"
 #define UPDATE_PIN          "updatePIN"
 #define UPDATE_LOCKDOWN     "updateLockdown"
-#define LOCK_SAFE           "lock"
+#define LOCK_SAFE           "updateLock"
 
 //These are the requestable fields
 #define STATE_OPEN          "state_open"

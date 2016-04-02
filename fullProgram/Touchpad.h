@@ -19,7 +19,8 @@ class Touchpad
         boolean isPWAccepted();
         void setPWAcceptedFalse();
         void setPWAcceptedTrue();
-    
+
+        String getString();
     
     private:
         bool checkInterrupt();
@@ -31,6 +32,7 @@ class Touchpad
         String num;
         String pass;
         boolean pwaccepted;
+        void shortBuzz();
     
     
 };

@@ -3,6 +3,9 @@
 #include "Touchpad.h"
 
 
+#define OPEN_LATCH_OUTPUT       PORT->Group[3].DIRSET.reg = PORT_PB30
+#define LED1_ON_MACRO           PORT->Group[3].OUTSET.reg = PORT_PB30
+#define LED1_OFF_MACRO          PORT->Group[3].OUTCLR.reg = PORT_PB30
 Touchpad::Touchpad()
 {
     irqpin = 2;  // Digital 2
@@ -18,6 +21,7 @@ void Touchpad::begin()
     pinMode(irqpin, INPUT);
     digitalWrite(irqpin, HIGH); //enable pullup resistor
     Wire.begin();
+    OPEN_LATCH_OUTPUT;
 
     mpr121_setup();
 }
@@ -28,6 +32,10 @@ void Touchpad::setPW(String PW)
 String Touchpad::getPW()
 {
     return pass;
+}
+String Touchpad::getString()
+{
+  return stringone;
 }
 boolean Touchpad::compareToPW(String tPW)
 {
@@ -107,14 +115,26 @@ void Touchpad::updateData()
                         if(stringone == pass)
                         {
                           Serial.print("Password accepted");
-                          pwaccepted = 1;
+                          if(pwaccepted == 1)
+                          {
+                            pwaccepted=0;
+                          }
+                          else
+                          {
+                            pwaccepted = 1;
+                          }
                           stringone = "";
                           num = "";
                         }
                         else
-                            Serial.print("Password Denied");
-                        stringone = "";
-                        num = "";
+                        {
+                          Serial.print("Password Denied");
+                          shortBuzz();
+                          delay(100);
+                          shortBuzz();
+                          stringone = "";
+                          num = "";
+                        }
 
                     break;
                     case 9:
@@ -235,4 +255,10 @@ void Touchpad::set_register(int address, unsigned char r, unsigned char v)
 bool Touchpad::checkInterrupt()
 {
   return digitalRead(irqpin);
+}
+void Touchpad::shortBuzz()
+{
+  LED1_ON_MACRO;
+  delay(100);
+  LED1_OFF_MACRO;
 }

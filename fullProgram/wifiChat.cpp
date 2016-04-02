@@ -5,7 +5,7 @@
 
 wifiChat::wifiChat()
 {
-  begin();
+  //begin();
 }
 int wifiChat::begin()
 {
@@ -25,7 +25,7 @@ String wifiChat::checkForRequest()
   tryConnect();
   String requestString = "";
   WiFiClient client = server.available();
-  Serial.print(client);
+  //Serial.println(client);
   if(!client) 
     return requestString;
 

@@ -3,7 +3,7 @@ import sys
 import telnetlib
 
 
-enable = False
+enable = True
 
 class telnetComs():
     
@@ -16,12 +16,13 @@ class telnetComs():
     requestDataString = "request"
     requestAllDataString = "reqAll"
     commandReceivedString = "CR"
-    def __init__(self=None,ip="192.168.46.101"):
+    def __init__(self=None,ip="192.168.46.131"):
         self.ipID = ip
         self.connected = False
         self.attemptConnect()
     def attemptConnect(self):
         if(enable):
+            #print("Attempting to connect to %s"%(self.ipID))
             self.tn = telnetlib.Telnet(self.ipID,timeout=5)
         self.writeLine(self.commandString +":" +self.handShakeCommand+ ":"+self.handShakeValue);
         response = self.readResponse()

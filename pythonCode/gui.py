@@ -66,10 +66,9 @@ class Application(tk.Toplevel):
         #Check controller for validity
         response = self.WiFiCOM.sendCommand(self.checkAdminPWID,PW)
         print("checkAdminPW response %s"%(response))
-        #if(response == "True"):
-        #    self.openAdminOptionsDialog()
-        self.openAdminOptionsDialog()   
-        print("TODO: check controller for adminPW")
+        if("True" in response):
+            self.openAdminOptionsDialog()
+        #self.openAdminOptionsDialog()   
     def sendUpdateAdminPassword(self,PW):
         response = self.WiFiCOM.sendCommand(self.updateAdminPWID,PW)
         print("sendUpdateAdminPassword response %s"%(response))
