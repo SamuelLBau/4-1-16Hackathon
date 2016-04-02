@@ -16,7 +16,7 @@ class Application(tk.Toplevel):
         
         
     def placeWidgets(self):
-        self.mainFrame = mainFrame(self,self.WiFiCOM)
+        self.mainFrame = mainFrame(self,self.WiFiCOM,self.sendCompleteTouchCode,self.sendCompleteEncoderCode)
         
         
         self.mainFrame.grid()
@@ -34,6 +34,23 @@ class Application(tk.Toplevel):
         
     def openAdminFrame(self):
         print("TODO: Create admin password selection / change codes")
+        
+    def sendCompleteTouchCode(self,code):
+        #Code is a string
+        print("TODO: send code to microcontroller, ask for if code accepted")
+        
+        return -1
+    def sendCompleteEncoderCode(self,code):    
+        #Code is a string
+        print("TODO: send code to microcontroller, ask for if code accepted")
+        return -1
+    def resetBothCodes(self):
+        print("TODO: undo any accepted codes")
+        
+        
+        
+        #placeholder, return code provided by microcontroller
+        return 1
         
     
         

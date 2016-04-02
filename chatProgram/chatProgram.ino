@@ -20,7 +20,7 @@
  */
 #include "wifiChat.h"
 wifiChat WIFI;
-
+int i = 0;
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(115200);
@@ -33,8 +33,18 @@ void setup() {
 
 void loop() 
 {
+  //WIFI.checkForRequest();
+  //return;
   Serial.println("In main loop");
-  if(WIFI.sendData("HelloAgain\n"));
-    WIFI.tryConnect();
-  delay(1000);
+  String s = WIFI.checkForRequest();
+  Serial.print("I = ");Serial.println(i++);
+  Serial.print("String is: ");
+  Serial.println(s);
+  if(s != "")
+  {
+    WIFI.sendData(s);
+  }
+  //if(WIFI.sendData("HelloAgain\n"));
+  //  WIFI.tryConnect();
+  delay(100);
 }

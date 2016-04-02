@@ -7,11 +7,18 @@ HOST = "192.168.46.101"
 #password = getpass.getpass()
 
 tn = telnetlib.Telnet(HOST)
+#delay(1000)
 
-#tn.write("Hello telnet\n")
-val = tn.read_all()
+tn.write("Hello telnet\n")
+tn.write("Hello\n")
+
+val = tn.read_until("Quit",timeout=.2)
+
+while(val == ""):
+    
+    print("Trying to get response")
+    tn.write("Hello telnet\n")
+    tn.write("Hello\n")
+    val = tn.read_until("Quit",timeout=.2)
 print "Printing val: %s" %(val)
-
-val2 = tn.read_until("Quit")
-print("Printing read until %s" %(val2))
 

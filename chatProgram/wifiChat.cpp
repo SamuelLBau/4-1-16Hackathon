@@ -14,16 +14,25 @@ int wifiChat::begin()
   keyIndex = 0;            // your network key Index number (needed only for WEP)
   status = WL_IDLE_STATUS;
   alreadyConnected = false; // whether or not the client was connected previously
+  WiFiServer tserver = WiFiServer(23);
+  server=tserver;
   return 0;
   //return tryConnect();
 }
 String wifiChat::checkForRequest()
 {
+  tryConnect();
   String requestString = "";
+  Serial.println("Checking for client");
   WiFiClient client = server.available();
+  Serial.println("Checked for client");
+  Serial.print(client);
   if(!client) 
     return requestString;
-    
+  Serial.println("Made past !client");
+
+  Serial.print("Client.available() = ");
+  Serial.print(client.available());
   if (client.available() > 0) {
     
     char thisChar = client.read();
@@ -45,10 +54,13 @@ int wifiChat::tryConnect()
     return -2;
   }
   // attempt to connect to Wifi network:
-  if(server.available() >0)
+  if(server.available() > 0)
     return 0;
 
   short numAttempts = 0;
+  status = WiFi.status();
+  if(status == WL_CONNECTED)
+    return 0;
   while ( status != WL_CONNECTED && numAttempts <= NUM_CONNECT_ATTEMPTS) 
   {
     numAttempts++;
@@ -89,17 +101,19 @@ void wifiChat::printWifiStatus()
 }
 int wifiChat::sendData(String outString)
 {
+  //WiFiClient client = server.available();
   if(!client.connected())
     client = server.available();
     
-  if(!client.connected()) return -1;
+  if(!client.connected()) 
+    return -1;
 
   client.flush();
-  char outChar[50];
-  outString.toCharArray(outChar,100);
+  char outChar[20];
+  outString.toCharArray(outChar,20);
   client.write(outChar);client.write("\r\n");
   Serial.print("Writing across WiFi: ");
-  Serial.print(outChar);
+  Serial.println(outChar);
 
   client.write("Quit");client.write("\r\n");
   Serial.print("Writing across WiFi: ");
