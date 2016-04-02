@@ -1,11 +1,17 @@
 import Tkinter as tk
 from mainFrame import mainFrame
 from telnetConnect import telnetComs
+from getAdminPWDialog import getAdminPW
+from adminOptionsDialog import adminOptionsDialog
 
 
 class Application(tk.Toplevel):
     #THESE MUST MATCH VALUES IN WiFiMessageParser
-    tryTouchpadCode = "tryTPCode"
+    tryTouchpadCode =   "tryTPCode"
+    checkAdminPWID =    "checkAdminPW"
+    updateAdminPWID =   "updateAPW"
+    updatePINID =       "updatePIN"
+    updateLockdown =    "updateLockdown"
     def __init__(self,parent=None):
         tk.Toplevel.__init__(self,parent,bg='#F0F0F0',bd=1,relief='sunken')
         
@@ -34,11 +40,37 @@ class Application(tk.Toplevel):
         
         
     def openAdminFrame(self):
-        print("TODO: Create admin password selection / change codes")
+        dialog = getAdminPW(self.checkAdminPW)
+        
+    def checkAdminPW(self,PW):
+        #Check controller for validity
+        #If error, open error dialog
+        #If correct, open admin options dialog
+        print("Password input was %s"%(PW))
+        response = self.WiFiCOM.sendCommand(self.checkAdminPWID,PW)
+        #if(response == "True"):
+        #    self.openAdminOptionsDialog()
+        self.openAdminOptionsDialog()   
+        print("TODO: check controller for adminPW")
+    def openAdminOptionsDialog(self):
+        dialog = adminOptionsDialog(UAPW=self.sendUpdateAdminPassword,UPIN=self.sendUpdatePIN,
+            ULD=self.sendUpdateLockdown)
+    def sendUpdateAdminPassword(self,PW):
+        response = self.WiFiCOM.sendCommand(self.updateAdminPWID,PW)
+        
+        print("TODO: send code to microcontroller, ask for if code accepted") 
+    def sendUpdatePIN(self,PIN):
+        #This is the touchpad code
+        response = self.WiFiCOM.sendCommand(self.updatePINID,PIN)
+        print("TODO: send code to microcontroller, ask for if code accepted") 
+    
+    def sendUpdateLockdown(self,state):
+        response = self.WiFiCOM.sendCommand(self.updateLockdown,state)
+        print("TODO: send code to microcontroller, ask for if code accepted") 
         
     def sendCompleteTouchCode(self,code):
         #Code is a string
-        self.WiFiCOM.sendCommand(self.tryTouchpadCode,code)
+        response = self.WiFiCOM.sendCommand(self.tryTouchpadCode,code)
         
         print("TODO: send code to microcontroller, ask for if code accepted")
         
