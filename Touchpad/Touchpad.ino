@@ -24,6 +24,10 @@
 
 int irqpin = 2;  // Digital 2
 boolean touchStates[12]; //to keep track of the previous touch states
+String stringone = "";
+String num = "";
+String pass = "1337";
+bool pwaccepted = 0;
 
 void setup(){
   pinMode(irqpin, INPUT);
@@ -57,16 +61,68 @@ void readTouchInputs(){
       
         if(touchStates[i] == 0){
           //pin i was just touched
-          Serial.print(i);
+          
+          switch(i) {
+            case 0:
+            stringone = "";
+            num = "";
+            Serial.print("Cleared");
+            break;
+            case 1:
+            num = "7";
+            break;
+            case 2:
+            num = "4";
+            break;
+            case 3:
+            num = "1";
+            break;
+            case 4:
+            num = "0";
+            break;
+            case 5:
+            num = "8";
+            break;
+            case 6:
+            num = "5";
+            break;
+            case 7:
+            num = "2";
+            break;
+            case 8:
+            if(stringone == pass){
+              Serial.print("Password accepted");
+              pwaccepted = 1;
+              stringone = "";
+              num = "";
+            }
+            else
+            Serial.print("Password Denied");
+            stringone = "";
+            num = "";
 
-
-        
-        }else if(touchStates[i] == 1){
+            break;
+            case 9:
+            num = "9";
+            break;
+            case 10:
+            num = "6";
+            break;
+            case 11:
+            num = "3";
+            break;
+            default:
+            break;
+           }
+            stringone = stringone + num;
+            Serial.println(stringone);
+          } else if(touchStates[i] == 1){
           //pin i is still being touched
         }  
-      
+
         touchStates[i] = 1;      
-      }else{
+      
+        } else{
         if(touchStates[i] == 1){
 
           
