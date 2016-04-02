@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <WiFi101.h>
 #include "wifiChat.h"
+#include "WiFiMessageParser.h"
 
 wifiChat::wifiChat()
 {
@@ -23,20 +24,17 @@ String wifiChat::checkForRequest()
 {
   tryConnect();
   String requestString = "";
-  Serial.println("Checking for client");
   WiFiClient client = server.available();
-  Serial.println("Checked for client");
   Serial.print(client);
   if(!client) 
     return requestString;
-  Serial.println("Made past !client");
 
-  Serial.print("Client.available() = ");
-  Serial.print(client.available());
+  //Serial.print("Client.available() = ");
+  //Serial.print(client.available());
   if (client.available() > 0) {
     
     char thisChar = client.read();
-    while(thisChar != '\n')
+    while(thisChar != '\n' && client.available() > 0)
     {
       requestString.concat(thisChar);
       thisChar = client.read();
@@ -109,15 +107,16 @@ int wifiChat::sendData(String outString)
     return -1;
 
   client.flush();
-  char outChar[20];
-  outString.toCharArray(outChar,20);
+  char outChar[25];
+  outString.concat(END_TRANSMISSION);
+  outString.toCharArray(outChar,25);
   client.write(outChar);client.write("\r\n");
   Serial.print("Writing across WiFi: ");
   Serial.println(outChar);
 
-  client.write("Quit");client.write("\r\n");
-  Serial.print("Writing across WiFi: ");
-  Serial.print("Quit");
+  //client.write("Quit");client.write("\r\n");
+  //Serial.print("Writing across WiFi: ");
+  //Serial.print("Quit");
   
   return 0;
   

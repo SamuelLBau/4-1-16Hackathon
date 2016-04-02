@@ -19,6 +19,7 @@
 
  */
 #include "wifiChat.h"
+#include "WifiMessageParser.h"
 wifiChat WIFI;
 int i = 0;
 void setup() {
@@ -33,18 +34,58 @@ void setup() {
 
 void loop() 
 {
-  //WIFI.checkForRequest();
-  //return;
   Serial.println("In main loop");
-  String s = WIFI.checkForRequest();
   Serial.print("I = ");Serial.println(i++);
-  Serial.print("String is: ");
-  Serial.println(s);
-  if(s != "")
-  {
-    WIFI.sendData(s);
-  }
+  handleWifiRequests();
+
+
   //if(WIFI.sendData("HelloAgain\n"));
   //  WIFI.tryConnect();
   delay(100);
 }
+void handleWifiRequests()
+{
+  Serial.println("Checking for Wifi Request");
+  String s = WIFI.checkForRequest();
+  if(s == "")
+    return;
+
+  Serial.print("Request received: ");
+  Serial.println(s);
+  int index = s.indexOf(":");
+  String prefix = s.substring(0,index);
+  String followingString = s.substring(index+1);
+  if(prefix == COMMAND_ID)
+  {
+    handleWiFiCommand(followingString);
+  }
+  else if(prefix == REQUEST_ID)
+  {
+    handleWiFiRequest(followingString);
+  }
+  else if(prefix == REQUESTALL_ID)
+  {
+    handleWiFiRequestAll();
+  }
+}
+void handleWiFiCommand(String commandString)
+{ 
+  int index = commandString.indexOf(":");
+  String command = commandString.substring(0,index);
+  String value = commandString.substring(index+1);
+  //The command string should have a semi-colon so the command can include Data
+  if(command == HANDSHAKE)
+  {
+    //handshake just expects the value to be returned to it
+    WIFI.sendData(value);
+  }
+}
+void handleWiFiRequest(String request)
+{
+  //The request string should just have the id of the requested data
+}
+void handleWiFiRequestAll()
+{
+  //This should generate a response with every valid data field
+}
+

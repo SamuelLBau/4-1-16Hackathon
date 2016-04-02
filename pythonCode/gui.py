@@ -1,14 +1,15 @@
 import Tkinter as tk
 from mainFrame import mainFrame
-
+from telnetConnect import telnetComs
 
 
 class Application(tk.Toplevel):
-
+    #THESE MUST MATCH VALUES IN WiFiMessageParser
+    tryTouchpadCode = "tryTPCode"
     def __init__(self,parent=None):
         tk.Toplevel.__init__(self,parent,bg='#F0F0F0',bd=1,relief='sunken')
         
-        self.WiFiCOM = 1
+        self.WiFiCOM = telnetComs(ip="192.168.46.101")
         
         self.setupMenus()
         
@@ -16,7 +17,7 @@ class Application(tk.Toplevel):
         
         
     def placeWidgets(self):
-        self.mainFrame = mainFrame(self,self.WiFiCOM,self.sendCompleteTouchCode,self.sendCompleteEncoderCode)
+        self.mainFrame = mainFrame(self,self.sendCompleteTouchCode,self.sendCompleteEncoderCode)
         
         
         self.mainFrame.grid()
@@ -37,11 +38,14 @@ class Application(tk.Toplevel):
         
     def sendCompleteTouchCode(self,code):
         #Code is a string
+        self.WiFiCOM.sendCommand(self.tryTouchpadCode,code)
+        
         print("TODO: send code to microcontroller, ask for if code accepted")
         
         return -1
     def sendCompleteEncoderCode(self,code):    
         #Code is a string
+        
         print("TODO: send code to microcontroller, ask for if code accepted")
         return -1
     def resetBothCodes(self):

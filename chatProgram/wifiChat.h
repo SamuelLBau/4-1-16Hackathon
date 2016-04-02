@@ -9,6 +9,10 @@
 #define NUM_CONNECT_ATTEMPTS 1  //How many times attempt to connect to wifi
 #define CONNECTION_DELAY 10000 //How long to wait for each connection attempt (ms)
 
+
+
+
+
 class wifiChat
 {
   public:

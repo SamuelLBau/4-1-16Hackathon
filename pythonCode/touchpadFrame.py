@@ -2,10 +2,9 @@ import Tkinter as tk
 
 
 class touchpadFrame(tk.Frame):
-    #SCF is the function called to send the code to microcontroller
+    #SCF is the function called to send the touchpad code to microcontroller
     def __init__(self,master,SCF):
         self.SCF=SCF
-        self.WiFiCOM = telnet
         tk.Frame.__init__(self,master,bg='#F0F0F0')
         
         
@@ -15,7 +14,8 @@ class touchpadFrame(tk.Frame):
         self.currentCode = tk.StringVar()
         self.currentCode.trace("w", lambda name, index, mode, currentCode=self.currentCode.get(): self.empty())
 
-        self.currentCodeTB = tk.Entry(self,width = 23,textvariable=self.currentCode)
+        self.currentCodeTB = tk.Entry(self,width = 24,textvariable=self.currentCode,state="disable")
+        self.currentCodeTB.config(disabledbackground="white",disabledforeground="black")
         
         self.currentCodeTB.grid(row=0,column=0,columnspan=5)       
         
@@ -28,11 +28,12 @@ class touchpadFrame(tk.Frame):
         string = string + num
         self.currentCode.set(string)
         print("Appending to code %s"%(num))
-        print("TODO: maybe make sure code is valid")
+        #print("TODO: maybe make sure code is valid")
     def clearCurrentCode(self):
         self.currentCode.set("")
     def getCurrentCode(self):
-        self.getCurrentCode.get()
+        rval = self.currentCode.get()
+        return rval
     def empty(self):
         num=1
         
