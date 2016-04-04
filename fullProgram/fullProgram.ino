@@ -32,6 +32,7 @@ String defaultPIN = "1111";
 String state_locked = "False";
 String state_open = "True";
 String state_lockdown = "False";
+String prevLockedState = state_locked;
 
 String latchOpen = "True";
 
@@ -71,8 +72,9 @@ void setup() {
   while(true)
   {
     closeLatch();
+    delay(500);
     openLatch();
-    //delay(1000);
+    delay(1000);
     Serial.println("In Latch loop");
   }
   */
@@ -96,7 +98,7 @@ void loop()
   lockedLogic(); //This edits state_locked
 
   //affectLatch();
-
+  //prevState_locked
   
   
 
@@ -170,15 +172,15 @@ void affectLatch()
 }
 void openLatch()
 {
-  //#OPEN_LATCH_ON_MACRO;
-  delay(500);
-  //#OPEN_LATCH_OFF_MACRO;
+  OPEN_LATCH_ON_MACRO;
+  delay(6000);
+  OPEN_LATCH_OFF_MACRO;
 }
 void closeLatch()
 {
-  //#CLOSE_LATCH_ON_MACRO;
-  delay(500);
-  //CLOSE_LATCH_OFF_MACRO;
+  CLOSE_LATCH_ON_MACRO;
+  delay(6000);
+  CLOSE_LATCH_OFF_MACRO;
 }
 
 void handleWifiRequests()
